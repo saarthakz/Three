@@ -8,7 +8,7 @@ export default function App() {
   const camera = new Three.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new Three.WebGLRenderer();
   const canvasDivRef = useRef(null);
-
+  const Pi = Math.PI;
 
   renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -33,15 +33,17 @@ export default function App() {
     scene.add(planeMesh);
     scene.add(boxMesh);
 
-    planeMesh.rotateX(Math.PI / 2);
+    planeMesh.rotateX(Pi / 2);
     boxMesh.translateY(1);
-
     camera.position.z = 10;
 
     const keys = {
       Up: false,
       Down: false,
-      Space: false
+      Left: false,
+      Right: false,
+      Space: false,
+      R: false
     };
 
     document.addEventListener("keydown", (event) => {
@@ -54,28 +56,51 @@ export default function App() {
       };
 
       if (event.key == "ArrowLeft") {
-        camera.translateX(0.1);
+        keys.Left = true;
+        // camera.translateX(0.1);
       };
 
       if (event.key == "ArrowRight") {
-        camera.translateX(-0.1);
+        keys.Right = true;
+        // camera.translateX(-0.1);
       };
 
       if (event.key == " ") {
         keys.Space = true;
       };
 
+      if (event.key == "r") {
+        keys.R = true;
+      }
+
       if (keys.Space && keys.Up) {
         camera.translateZ(0.1);
+      } else if (keys.R && keys.Up) {
+        camera.rotateX(Pi / 180);
       } else if (keys.Up) {
         camera.translateY(0.1);
       }
 
       if (keys.Space && keys.Down) {
         camera.translateZ(-0.1);
+      } else if (keys.R && keys.Down) {
+        camera.rotateX(- Pi / 180);
       } else if (keys.Down) {
         camera.translateY(-0.1);
       }
+
+      if (keys.R && keys.Left) {
+        camera.rotateY(Pi / 180);
+      } else if (keys.Left) {
+        camera.translateX(0.1);
+      }
+
+      if (keys.R && keys.Right) {
+        camera.rotateY(- Pi / 180);
+      } else if (keys.Right) {
+        camera.translateX(-0.1);
+      }
+
     });
 
     document.addEventListener("keyup", (event) => {
@@ -86,6 +111,17 @@ export default function App() {
       if (event.key == "ArrowDown") {
         keys.Down = false;
       };
+
+      if (event.key == "ArrowLeft") {
+        keys.Left = false;
+      };
+      if (event.key == "ArrowRight") {
+        keys.Right = false;
+      };
+
+      if (event.key == "r") {
+        keys.R = false;
+      }
 
       if (event.key == " ") {
         keys.Space = false;
