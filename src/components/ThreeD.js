@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as Three from "three";
 
-export default function App() {
+export default function ThreeD() {
 
   const scene = new Three.Scene();
   scene.background = new Three.Color("rgb(255, 255, 255)");
@@ -43,7 +43,8 @@ export default function App() {
       Left: false,
       Right: false,
       Space: false,
-      R: false
+      R: false,
+      M: false,
     };
 
     document.addEventListener("keydown", (event) => {
@@ -57,12 +58,10 @@ export default function App() {
 
       if (event.key == "ArrowLeft") {
         keys.Left = true;
-        // camera.translateX(0.1);
       };
 
       if (event.key == "ArrowRight") {
         keys.Right = true;
-        // camera.translateX(-0.1);
       };
 
       if (event.key == " ") {
@@ -71,35 +70,47 @@ export default function App() {
 
       if (event.key == "r") {
         keys.R = true;
-      }
+      };
+
+      if (event.key == "m") {
+        keys.M = true;
+      };
 
       if (keys.Space && keys.Up) {
         camera.translateZ(0.1);
       } else if (keys.R && keys.Up) {
         camera.rotateX(Pi / 180);
+      } else if (keys.M && keys.Up) {
+        boxMesh.translateZ(-0.1);
       } else if (keys.Up) {
         camera.translateY(0.1);
-      }
+      };
 
       if (keys.Space && keys.Down) {
         camera.translateZ(-0.1);
       } else if (keys.R && keys.Down) {
         camera.rotateX(- Pi / 180);
+      } else if (keys.M && keys.Down) {
+        boxMesh.translateZ(0.1);
       } else if (keys.Down) {
         camera.translateY(-0.1);
-      }
+      };
 
       if (keys.R && keys.Left) {
-        camera.rotateY(Pi / 180);
+        camera.rotateY(-Pi / 180);
+      } else if (keys.M && keys.Left) {
+        boxMesh.translateX(-0.1);
       } else if (keys.Left) {
         camera.translateX(0.1);
-      }
+      };
 
       if (keys.R && keys.Right) {
-        camera.rotateY(- Pi / 180);
+        camera.rotateY(Pi / 180);
+      } else if (keys.M && keys.Right) {
+        boxMesh.translateX(0.1);
       } else if (keys.Right) {
         camera.translateX(-0.1);
-      }
+      };
 
     });
 
@@ -115,13 +126,18 @@ export default function App() {
       if (event.key == "ArrowLeft") {
         keys.Left = false;
       };
+
       if (event.key == "ArrowRight") {
         keys.Right = false;
       };
 
       if (event.key == "r") {
         keys.R = false;
-      }
+      };
+
+      if (event.key == "m") {
+        keys.M = false;
+      };
 
       if (event.key == " ") {
         keys.Space = false;
