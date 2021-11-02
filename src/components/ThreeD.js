@@ -4,7 +4,7 @@ import * as Three from "three";
 export default function ThreeD() {
 
   const scene = new Three.Scene();
-  scene.background = new Three.Color("rgb(255, 255, 255)");
+  scene.background = new Three.Color("rgb(200, 200, 200)");
   const camera = new Three.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new Three.WebGLRenderer();
   const canvasDivRef = useRef(null);
@@ -43,8 +43,13 @@ export default function ThreeD() {
       Left: false,
       Right: false,
       Space: false,
-      R: false,
       M: false,
+    };
+
+    const mouse = {
+      click: false,
+      x: null,
+      y: null,
     };
 
     document.addEventListener("keydown", (event) => {
@@ -68,18 +73,12 @@ export default function ThreeD() {
         keys.Space = true;
       };
 
-      if (event.key == "r") {
-        keys.R = true;
-      };
-
       if (event.key == "m") {
         keys.M = true;
       };
 
       if (keys.Space && keys.Up) {
         camera.translateZ(0.1);
-      } else if (keys.R && keys.Up) {
-        camera.rotateX(Pi / 180);
       } else if (keys.M && keys.Up) {
         boxMesh.translateZ(-0.1);
       } else if (keys.Up) {
@@ -88,30 +87,24 @@ export default function ThreeD() {
 
       if (keys.Space && keys.Down) {
         camera.translateZ(-0.1);
-      } else if (keys.R && keys.Down) {
-        camera.rotateX(- Pi / 180);
       } else if (keys.M && keys.Down) {
         boxMesh.translateZ(0.1);
       } else if (keys.Down) {
         camera.translateY(-0.1);
       };
 
-      if (keys.R && keys.Left) {
-        camera.rotateY(-Pi / 180);
-      } else if (keys.M && keys.Left) {
+      if (keys.M && keys.Left) {
         boxMesh.translateX(-0.1);
       } else if (keys.Left) {
         camera.translateX(0.1);
       };
 
-      if (keys.R && keys.Right) {
-        camera.rotateY(Pi / 180);
-      } else if (keys.M && keys.Right) {
+      if (keys.M && keys.Right) {
         boxMesh.translateX(0.1);
       } else if (keys.Right) {
         camera.translateX(-0.1);
       };
-
+      console.log(boxMesh.position);
     });
 
     document.addEventListener("keyup", (event) => {
@@ -131,10 +124,6 @@ export default function ThreeD() {
         keys.Right = false;
       };
 
-      if (event.key == "r") {
-        keys.R = false;
-      };
-
       if (event.key == "m") {
         keys.M = false;
       };
@@ -142,6 +131,22 @@ export default function ThreeD() {
       if (event.key == " ") {
         keys.Space = false;
       };
+    });
+
+    document.addEventListener("mousedown", (event) => {
+      mouse.click = true;
+      mouse.x = event.clientX;
+      mouse.y = event.clientY;
+    });
+
+    document.addEventListener("mousemove", (event) => {
+      if (mouse.click == true) {
+
+      };
+    });
+
+    document.addEventListener("mouseup", () => {
+      mouse.click = false;
     });
 
     function animate() {
