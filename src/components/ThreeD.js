@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import * as Three from "three";
+import { Vector3 } from "three";
 
 export default function ThreeD() {
 
@@ -17,36 +18,31 @@ export default function ThreeD() {
   useEffect(() => {
     canvasDivRef.current.appendChild(element);
 
-    const planeGeometry = new Three.PlaneGeometry(1000, 1000);
+    const planeGeometry = new Three.PlaneGeometry(50, 50);
     const planeMaterial = new Three.MeshBasicMaterial({
       side: Three.DoubleSide,
-      color: new Three.Color("rgb(50, 50, 50)")
+      color: new Three.Color("rgb(50, 50, 50)"),
     });
     const planeMesh = new Three.Mesh(planeGeometry, planeMaterial);
 
     const boxGeometry = new Three.BoxGeometry(2, 2, 2);
     const edgesGeometry = new Three.EdgesGeometry(boxGeometry);
-    const edgesMaterial = new Three.LineBasicMaterial({ color: new Three.Color("rgb(0, 0, 0)") });
-    const edges = new Three.LineSegments(edgesGeometry, edgesMaterial);
+    const linesMaterial = new Three.LineBasicMaterial({ color: new Three.Color("rgb(0, 0, 0)") });
+    const edges = new Three.LineSegments(edgesGeometry, linesMaterial);
     const boxMaterial = new Three.MeshBasicMaterial({
       color: new Three.Color("rgb(200, 0, 0)")
     });
     const boxMesh = new Three.Mesh(boxGeometry, boxMaterial);
 
     const box = new Three.Group();
-    box.add(boxMesh);
-    box.add(edges);
+    box.add(boxMesh).add(edges);
 
-    scene.add(planeMesh);
-    scene.add(box);
-    const axesHelper = new Three.AxesHelper(5);
-    scene.add(axesHelper);
+    scene.add(planeMesh).add(box);
 
     planeMesh.rotateX(Pi / 2);
     box.translateY(1);
     camera.position.z = 15;
     camera.position.y = 5;
-    camera.rotateY(Pi / 10);
 
     const keys = {
       Up: false,
@@ -55,18 +51,13 @@ export default function ThreeD() {
       Right: false,
       Space: false,
       M: false,
+      R: false,
     };
 
     const mouse = {
       click: false,
       x: null,
       y: null,
-    };
-
-    let cameraPosition = {
-      x: null,
-      y: null,
-      z: null,
     };
 
     document.addEventListener("keydown", (event) => {
@@ -90,36 +81,28 @@ export default function ThreeD() {
         keys.Space = true;
       };
 
-      if (event.key == "m") {
-        keys.M = true;
-      };
+      if (event.key == "v") {
+        keys.V = true;
+      }
 
       if (keys.Space && keys.Up) {
-        camera.translateZ(0.1);
-      } else if (keys.M && keys.Up) {
-        box.translateZ(-0.1);
+        camera.translateZ(0.2);
       } else if (keys.Up) {
-        camera.translateY(0.1);
+        camera.translateY(0.2);
       };
 
       if (keys.Space && keys.Down) {
-        camera.translateZ(-0.1);
-      } else if (keys.M && keys.Down) {
-        box.translateZ(0.1);
+        camera.translateZ(-0.2);
       } else if (keys.Down) {
-        camera.translateY(-0.1);
+        camera.translateY(-0.2);
       };
 
-      if (keys.M && keys.Left) {
-        box.translateX(-0.1);
-      } else if (keys.Left) {
-        camera.translateX(0.1);
+      if (keys.Left) {
+        camera.translateX(0.2);
       };
 
-      if (keys.M && keys.Right) {
-        box.translateX(0.1);
-      } else if (keys.Right) {
-        camera.translateX(-0.1);
+      if (keys.Right) {
+        camera.translateX(-0.2);
       };
     });
 
@@ -140,16 +123,12 @@ export default function ThreeD() {
         keys.Right = false;
       };
 
-      if (event.key == "m") {
-        keys.M = false;
+      if (event.key == "v") {
+        keys.V = false;
       };
 
       if (event.key == " ") {
         keys.Space = false;
-      };
-
-      if (event.key == "r") {
-        console.log(camera.rotation);
       };
     });
 
@@ -157,29 +136,31 @@ export default function ThreeD() {
       mouse.click = true;
       mouse.x = event.clientX;
       mouse.y = event.clientY;
-
-      // const { x, y, z } = camera.position;
-      // cameraPosition = { x, y, z };
     });
 
     document.addEventListener("mousemove", (event) => {
-      if (mouse.click == true) {
-        const horizontalMovement = (mouse.x - event.clientX) / 500;
+
+      if (mouse.click == true && keys.V == true) {
         const verticalMovement = (mouse.y - event.clientY) / 500;
-        camera.rotateY(horizontalMovement);
-        // cameraPosition.x = camera.rotation.x;
-        // camera.y = cameraPosition.y;
+
         camera.rotateX(verticalMovement);
+
+        if (camera.rotation.x < 0) camera.rotation.x = 0;
+        if (camera.rotation.y < 0 && camera.rotation.z < 0) camera.rotation.z = 0;
+        if (camera.rotation.y > 0 && camera.rotation.z > 0) camera.rotation.z = 0;
+
+        mouse.x = event.clientX;
+        mouse.y = event.clientY;
+      };
+
+      if (mouse.click == true && keys.V != true) {
+        const horizontalMovement = (mouse.x - event.clientX) / 500;
+
+        camera.rotateY(horizontalMovement);
+
         mouse.x = event.clientX;
         mouse.y = event.clientY;
 
-        if (camera.rotation.x > 0) {
-          camera.rotation.x = 0;
-        };
-
-        if (camera.rotation.z != 0) {
-          camera.rotation.z = 0;
-        };
       };
     });
 
@@ -190,7 +171,7 @@ export default function ThreeD() {
     function animate() {
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
-    }
+    };
 
     animate();
 
